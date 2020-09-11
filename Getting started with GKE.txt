@@ -1,0 +1,58 @@
+##lab-Getting started with GKE
+
+#Objectives
+
+	-Provision a kubernetes cluster using kubernetes Engine
+
+	-Deploy and manage docker containers using kubectl
+
+#Steps
+
+1. Confirming that needed APIs are enabled
+	
+	#first thing to do is check if the Kubernetes Engine API and Container Registry API are enabled
+	gcloud service-management list --enabled
+
+	#If not in the list, then the APIs will have to be enabled using the following commands
+	gcloud services enable containerregistry.googleapis.com
+	gcloud services enable container.googleapis.com
+
+2. Starting a Kubernetes Engine cluster
+	
+	#Placing the zone into an environment variable
+	export MY_ZONE=us-central1-a
+
+	#Next is to Start a kubernetes cluster managed by kubernetes Engine, naming the cluster webfrontend and configure it to run 2 nodes
+	gcloud container clusters create webfrontend --zone $MY_ZONE --num-nodes 2
+
+	#To check the installed version of Kubernetes
+	kubectl version
+
+	#View the running nodes with the following commands
+	gcloud compute intance list
+
+3. Runing and deploying a container
+
+	#First, launch a single instance of the nginx container
+	kubectl create deploy nginx --image=nginx:1.17.10
+
+	#View the pod running the container
+	kubectl get pods
+
+	#Then, expose the nginx container to the Internet
+	kubectl expose deployment nginx --port 80 --type LoadBalancer
+
+	#To view the new service
+	kubectl get services
+
+	#Scaling up the number of pods running on the service
+	kubectl scale deployment nginx --replicas 3
+
+	#To confirm that Kubernetes has updated the number of pods
+	kubectl get pods
+
+	#To confirm that the external IP address has not changed
+	kubectl get services
+	
+	Then, I return to the web browser tab in which I viewed the cluster's external IP address. 
+	I will refresh the page to confirm that the nginx web server is still responding
